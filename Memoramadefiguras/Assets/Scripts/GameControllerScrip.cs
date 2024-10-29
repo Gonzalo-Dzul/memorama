@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -10,18 +11,24 @@ public class GameController : MonoBehaviour
     public const float xspace = 4f;
     public const float yspace = -5f;
 
+    public GameObject gameOverPanel; 
+    public GameObject winPanel;
     [SerializeField] private MainImagesScript startObject;
     [SerializeField] private Sprite[] images;
+    [SerializeField] private TextMeshProUGUI finalScoreText; 
+    [SerializeField] private TextMeshProUGUI finalAttemptsText;
 
     private MainImagesScript firstOpen;
     private MainImagesScript secondOpen;
+    private string sceneToLoad = "Menu";
+    private string siguienteEscena = "SegundoNivel";
 
     private int score = 0;
     private int attempts = 0;
     private const int maxAttempts = 8;  // Máximo de intentos permitidos
 
-    [SerializeField] private TextMesh scoreText;
-    [SerializeField] private TextMesh attemptsText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI attemptsText;
 
     private int[] Randomiser(int[] locations)
     {
@@ -109,7 +116,7 @@ public class GameController : MonoBehaviour
         if (firstOpen.SpriteId == secondOpen.SpriteId)
         {
             score++;
-            scoreText.text = "Score: " + score;
+            scoreText.text = "Puntuacion: " + score;
         }
         else
         {
@@ -122,19 +129,53 @@ public class GameController : MonoBehaviour
         secondOpen = null;
 
         attempts++;
-        attemptsText.text = "Attempts: " + attempts;
+        attemptsText.text = "Intentos: " + attempts;
 
         // Verifica si se han alcanzado los intentos máximos
+        if(score >= 4)
+        {
+            WinPanel();
+        }
+
         if (attempts >= maxAttempts)
         {
-            Debug.Log("Juego terminado. Se alcanzaron los intentos máximos.");
-            // Reinicia la escena o toma alguna acción cuando se alcanzan los intentos
-            Restart();
+            ShowGameOver();
         }
     }
 
     public void Restart()
     {
-        SceneManager.LoadScene("MainScene");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+   public void ShowGameOver()
+    {
+        Time.timeScale = 0; // Pausa el juego
+        gameOverPanel.SetActive(true); // Muestra el menú de Game Over
+    }
+
+    public void LoadScene()
+    {
+        SceneManager.LoadScene(sceneToLoad);
+    }
+
+    public void WinPanel()
+    {
+        Time.timeScale = 0;
+        winPanel.SetActive(true);
+        finalScoreText.text = "Puntuación: " + score;
+        finalAttemptsText.text = "Intentos: " + attempts;
+    }
+
+    public void Siguiente()
+    {
+        SceneManager.LoadScene(siguienteEscena);
+    }
+
+    public void SalirDeLaApp()
+    {
+        Debug.Log("Salir");
+        Application.Quit();
     }
 }
