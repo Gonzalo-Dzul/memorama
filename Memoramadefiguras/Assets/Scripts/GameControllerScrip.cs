@@ -6,21 +6,27 @@ using TMPro;
 
 public class GameController : MonoBehaviour
 {
-    public const int columnsLevel1 = 4; // Columnas del nivel 1
-    public const int rowsLevel1 = 2;    // Filas del nivel 1
-    public const float xspace = 4f;      // Espacio en el eje X
-    public const float yspace = -5f;     // Espacio en el eje Y
+    // Columnas y filas para cada nivel
+    public const int columnsLevel1 = 4;
+    public const int rowsLevel1 = 2;
+    public const int columnsLevel2 = 5;
+    public const int rowsLevel2 = 2;
+    public const int columnsLevel3 = 2; // Columnas del nivel 3
+    public const int rowsLevel3 = 6;    // Filas del nivel 3
+    public const float xspace = 4f;
+    public const float yspace = -5f;
 
-    public const int columnsLevel2 = 5; // Columnas del nivel 2
-    public const int rowsLevel2 = 2;    // Filas del nivel 2
-    private const int maxAttemptsLevel1 = 8; // Máximo de intentos nivel 1
-    private const int maxAttemptsLevel2 = 30000; // Máximo de intentos nivel 2
+    // Intentos máximos para cada nivel
+    private const int maxAttemptsLevel1 = 8;
+    private const int maxAttemptsLevel2 = 30000;
+    private const int maxAttemptsLevel3 = 20;
 
     public GameObject gameOverPanel; 
     public GameObject winPanel;
     [SerializeField] private MainImagesScript startObject;
-    [SerializeField] private Sprite[] level1Images; // Imágenes para el primer nivel
-    [SerializeField] private Sprite[] level2Images; // Imágenes para el segundo nivel
+    [SerializeField] private Sprite[] level1Images;
+    [SerializeField] private Sprite[] level2Images;
+    [SerializeField] private Sprite[] level3Images; // Imágenes para el tercer nivel
     [SerializeField] private TextMeshProUGUI finalScoreText; 
     [SerializeField] private TextMeshProUGUI finalAttemptsText;
 
@@ -28,15 +34,16 @@ public class GameController : MonoBehaviour
     private MainImagesScript secondOpen;
     private string sceneToLoad = "Menu";
     private string siguienteEscena = "SegundoNivel";
+    private string tercerEscena = "TercerNivel"; // Nombre de la escena del tercer nivel
 
     private int score = 0;
     private int attempts = 0;
-    private int maxAttempts; // Variable para el máximo de intentos
-    private int totalCards; // Declarar totalCards como variable de instancia
+    private int maxAttempts;
+    private int totalCards;
 
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI attemptsText;
-    [SerializeField] private AudioSource matchSound;  // Referencia al AudioSource para el sonido de coincidencia
+    [SerializeField] private AudioSource matchSound;
 
     private int[] Randomiser(int[] locations)
     {
@@ -64,96 +71,131 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        // Inicializa el juego basándose en el nivel actual
         InitializeGame();
     }
 
     private void InitializeGame()
+{
+    firstOpen = null;
+    secondOpen = null;
+    score = 0;
+    attempts = 0;
+
+    scoreText.text = "Puntuacion: " + score;
+    attemptsText.text = "Intentos: " + attempts;
+
+    // Configura el nivel según la escena actual
+    int columns, rows;
+    Sprite[] currentImages;
+    float currentXSpace = xspace;
+    float currentYSpace = yspace;
+
+    if (SceneManager.GetActiveScene().name == "SegundoNivel")
     {
-        // Establecer columnas y filas según el nivel
-        int columns = (SceneManager.GetActiveScene().name == "SegundoNivel") ? columnsLevel2 : columnsLevel1;
-        int rows = (SceneManager.GetActiveScene().name == "SegundoNivel") ? rowsLevel2 : rowsLevel1;
+        columns = columnsLevel2;
+        rows = rowsLevel2;
+        maxAttempts = maxAttemptsLevel2;
+        currentImages = level2Images;
+    }
+    else if (SceneManager.GetActiveScene().name == "TercerNivel")
+    {
+        columns = columnsLevel3;
+        rows = rowsLevel3;
+        maxAttempts = maxAttemptsLevel3;
+        currentImages = level3Images;
 
-        maxAttempts = (SceneManager.GetActiveScene().name == "SegundoNivel") ? maxAttemptsLevel2 : maxAttemptsLevel1; // Establece el máximo de intentos
+        // Ajusta el espaciado para el tercer nivel
+        currentXSpace = 3f; // Reduce el espacio horizontal si es necesario
+        currentYSpace = -5f; // Reduce el espacio vertical para que quepan más cartas
+    }
+    else
+    {
+        columns = columnsLevel1;
+        rows = rowsLevel1;
+        maxAttempts = maxAttemptsLevel1;
+        currentImages = level1Images;
+    }
 
-        Sprite[] currentImages = (SceneManager.GetActiveScene().name == "SegundoNivel") ? level2Images : level1Images;
+    totalCards = columns * rows;
+    totalCards += totalCards % 2;
 
-        // Verifica que hay imágenes disponibles
-        if (currentImages == null || currentImages.Length == 0)
+    if (totalCards / 2 > currentImages.Length)
+    {
+        Debug.LogError("No hay suficientes imágenes para crear el juego. Asegúrate de tener al menos " + (totalCards / 2) + " imágenes.");
+        return;
+    }
+
+    List<int> imageIndices = new List<int>();
+    for (int i = 0; i < currentImages.Length; i++)
+    {
+        imageIndices.Add(i);
+    }
+
+    int[] locations = new int[totalCards];
+    for (int i = 0; i < totalCards / 2; i++)
+    {
+        int randomIndex = Random.Range(0, imageIndices.Count);
+        int imageIndex = imageIndices[randomIndex];
+
+        locations[2 * i] = imageIndex;
+        locations[2 * i + 1] = imageIndex;
+
+        imageIndices.RemoveAt(randomIndex);
+    }
+
+    locations = Randomiser(locations);
+
+    Vector3 startPosition = startObject.transform.position;
+
+    bool isThirdLevel = SceneManager.GetActiveScene().name == "TercerNivel";
+
+    for (int i = 0; i < columns; i++)
+    {
+        for (int j = 0; j < rows; j++)
         {
-            Debug.LogError("No se han asignado imágenes en el array 'currentImages'. Por favor, asigna las imágenes en el Inspector.");
-            return;
-        }
-
-        totalCards = columns * rows; // Total de cartas
-
-        // Asegúrate de que el número de cartas sea par
-        totalCards += totalCards % 2; // Redondea hacia arriba para tener un número par de cartas
-
-        if (totalCards / 2 > currentImages.Length)
-        {
-            Debug.LogError("No hay suficientes imágenes para crear el juego. Asegúrate de tener al menos " + (totalCards / 2) + " imágenes.");
-            return; // Salir si no hay suficientes imágenes
-        }
-
-        List<int> imageIndices = new List<int>();
-        for (int i = 0; i < currentImages.Length; i++)
-        {
-            imageIndices.Add(i);
-        }
-
-        // Selecciona imágenes aleatorias, asegurando pares
-        int[] locations = new int[totalCards];
-        for (int i = 0; i < totalCards / 2; i++)
-        {
-            int randomIndex = Random.Range(0, imageIndices.Count);
-            int imageIndex = imageIndices[randomIndex];
-
-            locations[2 * i] = imageIndex;      // Primer uso
-            locations[2 * i + 1] = imageIndex;  // Segundo uso
-
-            imageIndices.RemoveAt(randomIndex); // Elimina la imagen utilizada para no repetir
-        }
-
-        locations = Randomiser(locations); // Aleatoriza posiciones
-
-        Vector3 startPosition = startObject.transform.position; // Posición inicial
-
-        for (int i = 0; i < columns; i++)
-        {
-            for (int j = 0; j < rows; j++)
+            MainImagesScript gameImage;
+            if (i == 0 && j == 0)
             {
-                MainImagesScript gameImage;
-                if (i == 0 && j == 0)
-                {
-                    gameImage = startObject; // Usa el objeto base
-                }
-                else
-                {
-                    gameImage = Instantiate(startObject) as MainImagesScript; // Crea una nueva carta
-                }
-
-                int index = j * columns + i; // Índice en el array
-                int id = locations[index]; // ID de la imagen
-
-                // Asegúrate de que el índice ID no exceda la longitud del array
-                if (id < currentImages.Length)
-                {
-                    gameImage.ChangeSprite(id, currentImages[id]); // Cambia la imagen de la carta
-                }
-                else
-                {
-                    Debug.LogError("Índice de imagen fuera de rango: " + id);
-                    continue; // Salta si el índice es incorrecto
-                }
-
-                // Calcula posición de la carta
-                float positionX = (xspace * i) + startPosition.x;
-                float positionY = (yspace * j) + startPosition.y;
-                gameImage.transform.position = new Vector3(positionX, positionY, startPosition.z);
+                gameImage = startObject;
             }
+            else
+            {
+                gameImage = Instantiate(startObject) as MainImagesScript;
+            }
+
+            int index = j * columns + i;
+            int id = locations[index];
+
+            if (id < currentImages.Length)
+            {
+                gameImage.ChangeSprite(id, currentImages[id]);
+            }
+            else
+            {
+                Debug.LogError("Índice de imagen fuera de rango: " + id);
+                continue;
+            }
+
+            float positionX, positionY;
+
+            if (isThirdLevel)
+            {
+                // Configuración vertical para el tercer nivel con ajuste de espacio
+                positionX = (currentXSpace * j) + startPosition.x;
+                positionY = (currentYSpace * i) + startPosition.y;
+            }
+            else
+            {
+                // Configuración estándar (horizontal)
+                positionX = (xspace * i) + startPosition.x;
+                positionY = (yspace * j) + startPosition.y;
+            }
+
+            gameImage.transform.position = new Vector3(positionX, positionY, startPosition.z);
         }
     }
+}
+
 
     public bool canOpen
     {
@@ -180,7 +222,6 @@ public class GameController : MonoBehaviour
             score++;
             scoreText.text = "Puntuacion: " + score;
 
-            // Reproduce el sonido de coincidencia
             if (matchSound != null)
             {
                 matchSound.Play();
@@ -199,8 +240,7 @@ public class GameController : MonoBehaviour
         attempts++;
         attemptsText.text = "Intentos: " + attempts;
 
-        // Verifica si se han alcanzado los intentos máximos
-        if (score >= (totalCards / 2)) // Ajusta la condición para la victoria
+        if (score >= (totalCards / 2))
         {
             WinPanel();
         }
@@ -219,8 +259,8 @@ public class GameController : MonoBehaviour
 
     public void ShowGameOver()
     {
-        Time.timeScale = 0; // Pausa el juego
-        gameOverPanel.SetActive(true); // Muestra el menú de Game Over
+        Time.timeScale = 0;
+        gameOverPanel.SetActive(true);
     }
 
     public void LoadScene()
@@ -238,7 +278,17 @@ public class GameController : MonoBehaviour
 
     public void Siguiente()
     {
-        SceneManager.LoadScene(siguienteEscena);
+        Time.timeScale = 1f;
+        
+        // Cargar la escena correspondiente según el nivel completado
+        if (SceneManager.GetActiveScene().name == "SegundoNivel")
+        {
+            SceneManager.LoadScene(tercerEscena); // Carga el tercer nivel
+        }
+        else
+        {
+            SceneManager.LoadScene(siguienteEscena); // Carga el segundo nivel
+        }
     }
 
     public void SalirDeLaApp()
