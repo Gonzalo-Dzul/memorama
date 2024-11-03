@@ -16,19 +16,23 @@ public class GameController : MonoBehaviour
     public const float xspace = 4f;
     public const float yspace = -5f;
 
-    // Intentos máximos para cada nivel
-    private const int maxAttemptsLevel1 = 8;
-    private const int maxAttemptsLevel2 = 30000;
-    private const int maxAttemptsLevel3 = 20;
+    // Intentos base para cada nivel
+    private const int baseAttemptsLevel1 = 8;
+    private const int baseAttemptsLevel2 = 13;
+    private const int baseAttemptsLevel3 = 20;
 
-    public GameObject gameOverPanel; 
+    private int totalAttempts = 0;
+
+
+    public GameObject gameOverPanel;
     public GameObject winPanel;
     [SerializeField] private MainImagesScript startObject;
     [SerializeField] private Sprite[] level1Images;
     [SerializeField] private Sprite[] level2Images;
     [SerializeField] private Sprite[] level3Images; // Imágenes para el tercer nivel
-    [SerializeField] private TextMeshProUGUI finalScoreText; 
+    [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private TextMeshProUGUI finalAttemptsText;
+    [SerializeField] private TextMeshProUGUI finalTimeText;
 
     private MainImagesScript firstOpen;
     private MainImagesScript secondOpen;
@@ -37,9 +41,11 @@ public class GameController : MonoBehaviour
     private string tercerEscena = "TercerNivel"; // Nombre de la escena del tercer nivel
 
     private int score = 0;
-    private int attempts = 0;
-    private int maxAttempts;
+    private int remainingAttempts;
     private int totalCards;
+
+    private float startTime; // Variable para almacenar el tiempo de inicio
+    private bool isGameActive = false; // Controla si el juego está activo
 
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI attemptsText;
@@ -75,127 +81,102 @@ public class GameController : MonoBehaviour
     }
 
     private void InitializeGame()
-{
-    firstOpen = null;
-    secondOpen = null;
-    score = 0;
-    attempts = 0;
-
-    scoreText.text = "Puntuacion: " + score;
-    attemptsText.text = "Intentos: " + attempts;
-
-    // Configura el nivel según la escena actual
-    int columns, rows;
-    Sprite[] currentImages;
-    float currentXSpace = xspace;
-    float currentYSpace = yspace;
-
-    if (SceneManager.GetActiveScene().name == "SegundoNivel")
     {
-        columns = columnsLevel2;
-        rows = rowsLevel2;
-        maxAttempts = maxAttemptsLevel2;
-        currentImages = level2Images;
-    }
-    else if (SceneManager.GetActiveScene().name == "TercerNivel")
-    {
-        columns = columnsLevel3;
-        rows = rowsLevel3;
-        maxAttempts = maxAttemptsLevel3;
-        currentImages = level3Images;
+        firstOpen = null;
+        secondOpen = null;
+        score = 0;
 
-        // Ajusta el espaciado para el tercer nivel
-        currentXSpace = 3f; // Reduce el espacio horizontal si es necesario
-        currentYSpace = -5f; // Reduce el espacio vertical para que quepan más cartas
-    }
-    else
-    {
-        columns = columnsLevel1;
-        rows = rowsLevel1;
-        maxAttempts = maxAttemptsLevel1;
-        currentImages = level1Images;
-    }
+        scoreText.text = "Puntuación: " + score;
 
-    totalCards = columns * rows;
-    totalCards += totalCards % 2;
+        // Configura el nivel según la escena actual
+        int columns, rows;
+        Sprite[] currentImages;
+        float currentXSpace = xspace;
+        float currentYSpace = yspace;
 
-    if (totalCards / 2 > currentImages.Length)
-    {
-        Debug.LogError("No hay suficientes imágenes para crear el juego. Asegúrate de tener al menos " + (totalCards / 2) + " imágenes.");
-        return;
-    }
-
-    List<int> imageIndices = new List<int>();
-    for (int i = 0; i < currentImages.Length; i++)
-    {
-        imageIndices.Add(i);
-    }
-
-    int[] locations = new int[totalCards];
-    for (int i = 0; i < totalCards / 2; i++)
-    {
-        int randomIndex = Random.Range(0, imageIndices.Count);
-        int imageIndex = imageIndices[randomIndex];
-
-        locations[2 * i] = imageIndex;
-        locations[2 * i + 1] = imageIndex;
-
-        imageIndices.RemoveAt(randomIndex);
-    }
-
-    locations = Randomiser(locations);
-
-    Vector3 startPosition = startObject.transform.position;
-
-    bool isThirdLevel = SceneManager.GetActiveScene().name == "TercerNivel";
-
-    for (int i = 0; i < columns; i++)
-    {
-        for (int j = 0; j < rows; j++)
+        if (SceneManager.GetActiveScene().name == "SegundoNivel")
         {
-            MainImagesScript gameImage;
-            if (i == 0 && j == 0)
-            {
-                gameImage = startObject;
-            }
-            else
-            {
-                gameImage = Instantiate(startObject) as MainImagesScript;
-            }
-
-            int index = j * columns + i;
-            int id = locations[index];
-
-            if (id < currentImages.Length)
-            {
-                gameImage.ChangeSprite(id, currentImages[id]);
-            }
-            else
-            {
-                Debug.LogError("Índice de imagen fuera de rango: " + id);
-                continue;
-            }
-
-            float positionX, positionY;
-
-            if (isThirdLevel)
-            {
-                // Configuración vertical para el tercer nivel con ajuste de espacio
-                positionX = (currentXSpace * j) + startPosition.x;
-                positionY = (currentYSpace * i) + startPosition.y;
-            }
-            else
-            {
-                // Configuración estándar (horizontal)
-                positionX = (xspace * i) + startPosition.x;
-                positionY = (yspace * j) + startPosition.y;
-            }
-
-            gameImage.transform.position = new Vector3(positionX, positionY, startPosition.z);
+            columns = columnsLevel2;
+            rows = rowsLevel2;
+            remainingAttempts = baseAttemptsLevel2;
+            currentImages = level2Images;
         }
-    }
-}
+        else if (SceneManager.GetActiveScene().name == "TercerNivel")
+        {
+            columns = columnsLevel3;
+            rows = rowsLevel3;
+            remainingAttempts = baseAttemptsLevel3;
+            currentImages = level3Images;
+            currentXSpace = 3f;
+            currentYSpace = -5f;
+        }
+        else
+        {
+            columns = columnsLevel1;
+            rows = rowsLevel1;
+            remainingAttempts = baseAttemptsLevel1;
+            currentImages = level1Images;
+        }
 
+        totalCards = columns * rows;
+        totalCards += totalCards % 2;
+
+        if (totalCards / 2 > currentImages.Length)
+        {
+            Debug.LogError("No hay suficientes imágenes para crear el juego.");
+            return;
+        }
+
+        attemptsText.text = "Intentos: " + remainingAttempts;
+
+        List<int> imageIndices = new List<int>();
+        for (int i = 0; i < currentImages.Length; i++)
+        {
+            imageIndices.Add(i);
+        }
+
+        int[] locations = new int[totalCards];
+        for (int i = 0; i < totalCards / 2; i++)
+        {
+            int randomIndex = Random.Range(0, imageIndices.Count);
+            int imageIndex = imageIndices[randomIndex];
+            locations[2 * i] = imageIndex;
+            locations[2 * i + 1] = imageIndex;
+            imageIndices.RemoveAt(randomIndex);
+        }
+
+        locations = Randomiser(locations);
+
+        Vector3 startPosition = startObject.transform.position;
+        bool isThirdLevel = SceneManager.GetActiveScene().name == "TercerNivel";
+
+        for (int i = 0; i < columns; i++)
+        {
+            for (int j = 0; j < rows; j++)
+            {
+                MainImagesScript gameImage = (i == 0 && j == 0) ? startObject : Instantiate(startObject);
+                int index = j * columns + i;
+                int id = locations[index];
+
+                if (id < currentImages.Length)
+                {
+                    gameImage.ChangeSprite(id, currentImages[id]);
+                }
+                else
+                {
+                    Debug.LogError("Índice de imagen fuera de rango: " + id);
+                    continue;
+                }
+
+                float positionX = isThirdLevel ? (currentXSpace * j) + startPosition.x : (xspace * i) + startPosition.x;
+                float positionY = isThirdLevel ? (currentYSpace * i) + startPosition.y : (yspace * j) + startPosition.y;
+                gameImage.transform.position = new Vector3(positionX, positionY, startPosition.z);
+            }
+        }
+
+        startTime = Time.time;
+        isGameActive = true;
+    }
 
     public bool canOpen
     {
@@ -217,10 +198,14 @@ public class GameController : MonoBehaviour
 
     private IEnumerator CheckGuessed()
     {
+        remainingAttempts--;  // Descuento de intento al hacer un intento
+        totalAttempts++;
+        attemptsText.text = "Intentos: " + remainingAttempts;
+
         if (firstOpen.SpriteId == secondOpen.SpriteId)
         {
             score++;
-            scoreText.text = "Puntuacion: " + score;
+            scoreText.text = "Puntuación: " + score;
 
             if (matchSound != null)
             {
@@ -237,15 +222,12 @@ public class GameController : MonoBehaviour
         firstOpen = null;
         secondOpen = null;
 
-        attempts++;
-        attemptsText.text = "Intentos: " + attempts;
-
         if (score >= (totalCards / 2))
         {
             WinPanel();
         }
 
-        if (attempts >= maxAttempts)
+        if (remainingAttempts <= 0)
         {
             ShowGameOver();
         }
@@ -268,18 +250,32 @@ public class GameController : MonoBehaviour
         SceneManager.LoadScene(sceneToLoad);
     }
 
+    private void Update()
+    {
+        // Actualizar cronómetro si el juego está activo
+        if (isGameActive)
+        {
+            float elapsedTime = Time.time - startTime;
+            // Muestra el tiempo transcurrido en la interfaz de usuario si es necesario
+        }
+    }
+
+
     public void WinPanel()
     {
         Time.timeScale = 0;
         winPanel.SetActive(true);
         finalScoreText.text = "Puntuación: " + score;
-        finalAttemptsText.text = "Intentos: " + attempts;
+        finalAttemptsText.text = "Intentos realizados: " + totalAttempts;
+        isGameActive = false;
+        float finalTime = Time.time - startTime;
+        finalTimeText.text = "Tiempo: " + finalTime.ToString("F2") + " seg.";
     }
 
     public void Siguiente()
     {
         Time.timeScale = 1f;
-        
+
         // Cargar la escena correspondiente según el nivel completado
         if (SceneManager.GetActiveScene().name == "SegundoNivel")
         {
