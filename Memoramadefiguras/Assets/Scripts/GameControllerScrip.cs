@@ -23,6 +23,8 @@ public class GameController : MonoBehaviour
 
     private int totalAttempts = 0;
 
+    private bool gameEnded = false; // Nueva variable para evitar múltiples paneles activos
+
     public GameObject gameOverPanel;
     public GameObject winPanel;
     [SerializeField] private MainImagesScript startObject;
@@ -199,6 +201,7 @@ public class GameController : MonoBehaviour
 
     private IEnumerator CheckGuessed()
     {
+        if (gameEnded) yield break; // No ejecutar si el juego ya ha terminado
         remainingAttempts--;
         totalAttempts++;
         attemptsText.text = "Intentos: " + remainingAttempts;
@@ -242,17 +245,40 @@ public class GameController : MonoBehaviour
     public void Restart()
     {
         Time.timeScale = 1f;
+        isGameActive = false;
+        gameEnded = false;
+        firstOpen = null;
+        secondOpen = null;
+        score = 0;
+        totalAttempts = 0;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void ShowGameOver()
     {
+        if (gameEnded) return;
+        gameEnded = true;
         Time.timeScale = 0;
+        isGameActive = false;
         gameOverPanel.SetActive(true);
     }
 
     public void LoadScene()
     {
+        // Restablecemos el estado del juego
+        isGameActive = false;
+        firstOpen = null;
+        secondOpen = null;
+        score = 0;
+        totalAttempts = 0;
+        remainingAttempts = 0;
+        
+        // Desactivar los paneles de victoria y derrota para evitar problemas de interfaz
+        winPanel.SetActive(false);
+        gameOverPanel.SetActive(false);
+
+        // Cargar la escena del menú
+        Time.timeScale = 1f;
         SceneManager.LoadScene(sceneToLoad);
     }
 
@@ -268,11 +294,15 @@ public class GameController : MonoBehaviour
 
     public void WinPanel()
     {
+         if (gameEnded) return; // Evitar activar múltiples paneles
+
+        gameEnded = true;
         Time.timeScale = 0;
+        isGameActive = false; // Desactivar el juego para que no se volteen más cartas
         winPanel.SetActive(true);
         finalScoreText.text = "Puntuación: " + score;
         finalAttemptsText.text = "Intentos realizados: " + totalAttempts;
-        isGameActive = false;
+
         float finalTime = Time.time - startTime;
         finalTimeText.text = "Tiempo: " + finalTime.ToString("F2") + " seg.";
 
@@ -285,7 +315,18 @@ public class GameController : MonoBehaviour
     public void Siguiente()
     {
         Time.timeScale = 1f;
+        isGameActive = false; // Reinicia el estado del juego
+        firstOpen = null;
+        secondOpen = null;
+        score = 0;
+        totalAttempts = 0;
+        remainingAttempts = 0;
+        
+        // Desactiva los paneles para el nuevo nivel
+        winPanel.SetActive(false);
+        gameOverPanel.SetActive(false);
 
+        // Carga la escena correspondiente
         if (SceneManager.GetActiveScene().name == "SegundoNivel")
         {
             SceneManager.LoadScene(tercerEscena);
