@@ -23,7 +23,6 @@ public class GameController : MonoBehaviour
 
     private int totalAttempts = 0;
 
-
     public GameObject gameOverPanel;
     public GameObject winPanel;
     [SerializeField] private MainImagesScript startObject;
@@ -50,6 +49,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI attemptsText;
     [SerializeField] private AudioSource matchSound;
+    [SerializeField] private AudioSource errorSound; // Sonido de error
+    [SerializeField] private AudioSource winSound;   // Sonido de ganar
 
     private int[] Randomiser(int[] locations)
     {
@@ -198,7 +199,7 @@ public class GameController : MonoBehaviour
 
     private IEnumerator CheckGuessed()
     {
-        remainingAttempts--;  // Descuento de intento al hacer un intento
+        remainingAttempts--;
         totalAttempts++;
         attemptsText.text = "Intentos: " + remainingAttempts;
 
@@ -217,6 +218,11 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             firstOpen.Close();
             secondOpen.Close();
+
+            if (errorSound != null)
+            {
+                errorSound.Play();
+            }
         }
 
         firstOpen = null;
@@ -260,7 +266,6 @@ public class GameController : MonoBehaviour
         }
     }
 
-
     public void WinPanel()
     {
         Time.timeScale = 0;
@@ -270,20 +275,24 @@ public class GameController : MonoBehaviour
         isGameActive = false;
         float finalTime = Time.time - startTime;
         finalTimeText.text = "Tiempo: " + finalTime.ToString("F2") + " seg.";
+
+        if (winSound != null)
+        {
+            winSound.Play();
+        }
     }
 
     public void Siguiente()
     {
         Time.timeScale = 1f;
 
-        // Cargar la escena correspondiente según el nivel completado
         if (SceneManager.GetActiveScene().name == "SegundoNivel")
         {
-            SceneManager.LoadScene(tercerEscena); // Carga el tercer nivel
+            SceneManager.LoadScene(tercerEscena);
         }
         else
         {
-            SceneManager.LoadScene(siguienteEscena); // Carga el segundo nivel
+            SceneManager.LoadScene(siguienteEscena);
         }
     }
 
