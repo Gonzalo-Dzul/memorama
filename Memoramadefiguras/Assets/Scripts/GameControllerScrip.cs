@@ -6,6 +6,7 @@ using TMPro;
 
 public class GameController : MonoBehaviour
 {
+    public MainImagesScript[] allCards;
     // Columnas y filas para cada nivel
     public const int columnsLevel1 = 4;
     public const int rowsLevel1 = 2;
@@ -34,6 +35,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private TextMeshProUGUI finalAttemptsText;
     [SerializeField] private TextMeshProUGUI finalTimeText;
+    [SerializeField] private TextMeshProUGUI timerText;
 
     private MainImagesScript firstOpen;
     private MainImagesScript secondOpen;
@@ -81,6 +83,39 @@ public class GameController : MonoBehaviour
         }
 
         InitializeGame();
+        // Encuentra todas las cartas en la escena automáticamente
+        allCards = FindObjectsOfType<MainImagesScript>();
+        StartCoroutine(ShowAllCardsForMemory());
+    }
+
+    private IEnumerator ShowAllCardsForMemory()
+    {
+        // Calcula la cantidad de pares
+        int numPairs = totalCards / 2;
+
+        // Tiempo base para memorizar
+        float baseMemoryTime = 1f;
+
+        // Tiempo extra según el número de pares (por ejemplo, 0.5 segundos por cada par adicional)
+        float extraMemoryTime = 0.5f * numPairs;
+
+        // Tiempo total de memorización
+        float totalMemoryTime = baseMemoryTime + extraMemoryTime;
+
+        // Muestra todas las cartas al inicio del juego
+        foreach (var card in allCards)
+        {
+            card.Open();
+        }
+
+        // Espera el tiempo calculado para que el jugador pueda memorizar
+        yield return new WaitForSeconds(totalMemoryTime);
+
+        // Voltea todas las cartas nuevamente
+        foreach (var card in allCards)
+        {
+            card.Close();
+        }
     }
 
     private void InitializeGame()
@@ -288,7 +323,7 @@ public class GameController : MonoBehaviour
         if (isGameActive)
         {
             float elapsedTime = Time.time - startTime;
-            // Muestra el tiempo transcurrido en la interfaz de usuario si es necesario
+            timerText.text = "Tiempo: " + elapsedTime.ToString("F2") + " seg";
         }
     }
 
