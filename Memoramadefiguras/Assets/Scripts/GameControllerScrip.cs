@@ -19,8 +19,8 @@ public class GameController : MonoBehaviour
 
     // Intentos base para cada nivel
     private const int baseAttemptsLevel1 = 8;
-    private const int baseAttemptsLevel2 = 13;
-    private const int baseAttemptsLevel3 = 20;
+    private const int baseAttemptsLevel2 = 10;
+    private const int baseAttemptsLevel3 = 12;
 
     private int totalAttempts = 0;
 
@@ -36,6 +36,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI finalAttemptsText;
     [SerializeField] private TextMeshProUGUI finalTimeText;
     [SerializeField] private TextMeshProUGUI timerText;
+    
+
 
     private MainImagesScript firstOpen;
     private MainImagesScript secondOpen;
@@ -90,34 +92,42 @@ public class GameController : MonoBehaviour
 
     private IEnumerator ShowAllCardsForMemory()
     {
-        // Calcula la cantidad de pares
-        int numPairs = totalCards / 2;
+      // Determina el tiempo de visualización basado en el nivel actual
+    float displayTime;
+    string currentScene = SceneManager.GetActiveScene().name;
 
-        // Tiempo base para memorizar
-        float baseMemoryTime = 1f;
-
-        // Tiempo extra según el número de pares (por ejemplo, 0.5 segundos por cada par adicional)
-        float extraMemoryTime = 0.5f * numPairs;
-
-        // Tiempo total de memorización
-        float totalMemoryTime = baseMemoryTime + extraMemoryTime;
-
-        // Muestra todas las cartas al inicio del juego
-        foreach (var card in allCards)
-        {
-            card.Open();
-        }
-
-        // Espera el tiempo calculado para que el jugador pueda memorizar
-        yield return new WaitForSeconds(totalMemoryTime);
-
-        // Voltea todas las cartas nuevamente
-        foreach (var card in allCards)
-        {
-            card.Close();
-        }
+    if (currentScene == "SegundoNivel")
+    {
+        displayTime = 4f; // Tiempo para el segundo nivel
+    }
+    else if (currentScene == "TercerNivel")
+    {
+        displayTime = 5f; // Tiempo para el tercer nivel
+    }
+    else
+    {
+        displayTime = 3f; // Tiempo para el primer nivel
     }
 
+    // Muestra todas las cartas al inicio del juego
+    foreach (var card in allCards)
+    {
+        card.Open();
+    }
+
+    // Espera el tiempo definido para que el jugador pueda memorizar
+    yield return new WaitForSeconds(displayTime);
+
+    // Voltea todas las cartas nuevamente
+    foreach (var card in allCards)
+    {
+        card.Close();
+    }
+
+    // Inicia el tiempo de juego después de mostrar todas las cartas
+    startTime = Time.time;
+    isGameActive = true;
+}
     private void InitializeGame()
     {
         firstOpen = null;

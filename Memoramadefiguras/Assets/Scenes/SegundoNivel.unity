@@ -6041,8 +6041,8 @@ MonoBehaviour:
   scoreText: {fileID: 2137995611}
   attemptsText: {fileID: 1819369792}
   matchSound: {fileID: 2129584803}
-  errorSound: {fileID: 0}
-  winSound: {fileID: 0}
+  errorSound: {fileID: 2129584806}
+  winSound: {fileID: 2129584805}
 --- !u!82 &2129584803
 AudioSource:
   m_ObjectHideFlags: 0
