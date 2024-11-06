@@ -57,6 +57,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private AudioSource matchSound;
     [SerializeField] private AudioSource errorSound; // Sonido de error
     [SerializeField] private AudioSource winSound;   // Sonido de ganar
+    [SerializeField] private AudioSource gameOverSound; // Sonido de Game Over
 
     private int[] Randomiser(int[] locations)
     {
@@ -306,6 +307,11 @@ public class GameController : MonoBehaviour
         Time.timeScale = 0;
         isGameActive = false;
         gameOverPanel.SetActive(true);
+
+        if (gameOverSound != null)
+        {
+            gameOverSound.Play(); // Reproduce el sonido de Game Over
+        }
     }
 
     public void LoadScene()
