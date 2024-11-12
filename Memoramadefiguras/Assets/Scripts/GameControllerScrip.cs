@@ -28,7 +28,7 @@ public class GameController : MonoBehaviour
 
     public GameObject gameOverPanel;
     public GameObject winPanel;
-    [SerializeField] private MainImagesScript startObject;
+    [SerializeField] private MainImagesScript startObject;      
     [SerializeField] private Sprite[] level1Images;
     [SerializeField] private Sprite[] level2Images;
     [SerializeField] private Sprite[] level3Images; // Imágenes para el tercer nivel
