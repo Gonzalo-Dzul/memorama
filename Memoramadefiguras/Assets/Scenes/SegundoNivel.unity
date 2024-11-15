@@ -5521,7 +5521,7 @@ GameObject:
   - component: {fileID: 1931301923}
   - component: {fileID: 1931301922}
   m_Layer: 5
-  m_Name: BotonMenu (1)
+  m_Name: Salir
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6017,6 +6017,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allCards: []
+  columnsLevel4: 6
+  rowsLevel4: 4
+  xspaceLevel4: 3.5
+  yspaceLevel4: -4.5
   gameOverPanel: {fileID: 930865214}
   winPanel: {fileID: 1195138866}
   startObject: {fileID: 512795039}
@@ -6035,10 +6039,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 6d5bb20b399f8a34986472cafa051cd2, type: 3}
   - {fileID: 21300000, guid: f14dc25ed4028c9419f217d07fd4c26c, type: 3}
   level3Images: []
+  level4Images: []
   finalScoreText: {fileID: 1229901732}
   finalAttemptsText: {fileID: 153041415}
   finalTimeText: {fileID: 311206311}
   timerText: {fileID: 1086389648}
+  cuartoEscena: CuartoNivel
   scoreText: {fileID: 2137995611}
   attemptsText: {fileID: 1819369792}
   matchSound: {fileID: 2129584803}

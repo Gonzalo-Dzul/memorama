@@ -14,6 +14,8 @@ public class GameController : MonoBehaviour
     public const int rowsLevel2 = 2;
     public const int columnsLevel3 = 2; // Columnas del nivel 3
     public const int rowsLevel3 = 6;    // Filas del nivel 3
+    public const int columnsLevel4 = 6;
+    public const int rowsLevel4 = 4;
     public const float xspace = 4f;
     public const float yspace = -5f;
 
@@ -21,6 +23,7 @@ public class GameController : MonoBehaviour
     private const int baseAttemptsLevel1 = 8;
     private const int baseAttemptsLevel2 = 10;
     private const int baseAttemptsLevel3 = 12;
+    private const int baseAttemptsLevel4 = 24; // Intentos para el nivel 4
 
     private int totalAttempts = 0;
 
@@ -28,22 +31,22 @@ public class GameController : MonoBehaviour
 
     public GameObject gameOverPanel;
     public GameObject winPanel;
-    [SerializeField] private MainImagesScript startObject;      
+    [SerializeField] private MainImagesScript startObject;
     [SerializeField] private Sprite[] level1Images;
     [SerializeField] private Sprite[] level2Images;
     [SerializeField] private Sprite[] level3Images; // Imágenes para el tercer nivel
+    [SerializeField] private Sprite[] level4Images; // Imágenes para el nivel 4
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private TextMeshProUGUI finalAttemptsText;
     [SerializeField] private TextMeshProUGUI finalTimeText;
     [SerializeField] private TextMeshProUGUI timerText;
-    
-
 
     private MainImagesScript firstOpen;
     private MainImagesScript secondOpen;
     private string sceneToLoad = "Menu";
     private string siguienteEscena = "SegundoNivel";
     private string tercerEscena = "TercerNivel"; // Nombre de la escena del tercer nivel
+    private string cuartoEscena = "CuartoNivel"; // Nombre de la escena del nivel 4
 
     private int score = 0;
     private int remainingAttempts;
@@ -93,42 +96,47 @@ public class GameController : MonoBehaviour
 
     private IEnumerator ShowAllCardsForMemory()
     {
-      // Determina el tiempo de visualización basado en el nivel actual
-    float displayTime;
-    string currentScene = SceneManager.GetActiveScene().name;
+        // Determina el tiempo de visualización basado en el nivel actual
+        float displayTime;
+        string currentScene = SceneManager.GetActiveScene().name;
 
-    if (currentScene == "SegundoNivel")
-    {
-        displayTime = 4f; // Tiempo para el segundo nivel
-    }
-    else if (currentScene == "TercerNivel")
-    {
-        displayTime = 5f; // Tiempo para el tercer nivel
-    }
-    else
-    {
-        displayTime = 3f; // Tiempo para el primer nivel
+        if (currentScene == "SegundoNivel")
+        {
+            displayTime = 4f; // Tiempo para el segundo nivel
+        }
+        else if (currentScene == "TercerNivel")
+        {
+            displayTime = 5f; // Tiempo para el tercer nivel
+        }
+        else if (currentScene == "CuartoNivel")
+        {
+            displayTime = 6f; // Tiempo para el nivel 4
+        }
+        else
+        {
+            displayTime = 3f; // Tiempo para el primer nivel
+        }
+
+        // Muestra todas las cartas al inicio del juego
+        foreach (var card in allCards)
+        {
+            card.Open();
+        }
+
+        // Espera el tiempo definido para que el jugador pueda memorizar
+        yield return new WaitForSeconds(displayTime);
+
+        // Voltea todas las cartas nuevamente
+        foreach (var card in allCards)
+        {
+            card.Close();
+        }
+
+        // Inicia el tiempo de juego después de mostrar todas las cartas
+        startTime = Time.time;
+        isGameActive = true;
     }
 
-    // Muestra todas las cartas al inicio del juego
-    foreach (var card in allCards)
-    {
-        card.Open();
-    }
-
-    // Espera el tiempo definido para que el jugador pueda memorizar
-    yield return new WaitForSeconds(displayTime);
-
-    // Voltea todas las cartas nuevamente
-    foreach (var card in allCards)
-    {
-        card.Close();
-    }
-
-    // Inicia el tiempo de juego después de mostrar todas las cartas
-    startTime = Time.time;
-    isGameActive = true;
-}
     private void InitializeGame()
     {
         firstOpen = null;
@@ -142,6 +150,8 @@ public class GameController : MonoBehaviour
         Sprite[] currentImages;
         float currentXSpace = xspace;
         float currentYSpace = yspace;
+        float xSpaceLvl4 = xspace;
+        float ySpaceLvl4 = yspace;
 
         if (SceneManager.GetActiveScene().name == "SegundoNivel")
         {
@@ -158,6 +168,15 @@ public class GameController : MonoBehaviour
             currentImages = level3Images;
             currentXSpace = 3f;
             currentYSpace = -5f;
+        }
+        else if (SceneManager.GetActiveScene().name == "CuartoNivel")
+        {
+            columns = columnsLevel4;
+            rows = rowsLevel4;
+            remainingAttempts = baseAttemptsLevel4;
+            currentImages = level4Images;
+            xSpaceLvl4 = 2.7f;
+            ySpaceLvl4 = -2.1f;
         }
         else
         {
@@ -217,11 +236,30 @@ public class GameController : MonoBehaviour
                     continue;
                 }
 
-                float positionX = isThirdLevel ? (currentXSpace * j) + startPosition.x : (xspace * i) + startPosition.x;
-                float positionY = isThirdLevel ? (currentYSpace * i) + startPosition.y : (yspace * j) + startPosition.y;
+                // Calcular posición para el nivel actual
+                float positionX, positionY;
+
+                if (SceneManager.GetActiveScene().name == "CuartoNivel")
+                {
+                    positionX = (xSpaceLvl4 * i) + startPosition.x;
+                    positionY = (ySpaceLvl4 * j) + startPosition.y;
+                }
+                else if (SceneManager.GetActiveScene().name == "TercerNivel")
+                {
+                    positionX = (currentXSpace * j) + startPosition.x;
+                    positionY = (currentYSpace * i) + startPosition.y;
+                }
+                else
+                {
+                    positionX = (xspace * i) + startPosition.x;
+                    positionY = (yspace * j) + startPosition.y;
+                }
+
+                // Aplicar la posición a la carta
                 gameImage.transform.position = new Vector3(positionX, positionY, startPosition.z);
             }
         }
+
 
         startTime = Time.time;
         isGameActive = true;
@@ -323,7 +361,7 @@ public class GameController : MonoBehaviour
         score = 0;
         totalAttempts = 0;
         remainingAttempts = 0;
-        
+
         // Desactivar los paneles de victoria y derrota para evitar problemas de interfaz
         winPanel.SetActive(false);
         gameOverPanel.SetActive(false);
@@ -345,7 +383,7 @@ public class GameController : MonoBehaviour
 
     public void WinPanel()
     {
-         if (gameEnded) return; // Evitar activar múltiples paneles
+        if (gameEnded) return; // Evitar activar múltiples paneles
 
         gameEnded = true;
         Time.timeScale = 0;
@@ -372,13 +410,17 @@ public class GameController : MonoBehaviour
         score = 0;
         totalAttempts = 0;
         remainingAttempts = 0;
-        
+
         // Desactiva los paneles para el nuevo nivel
         winPanel.SetActive(false);
         gameOverPanel.SetActive(false);
 
         // Carga la escena correspondiente
-        if (SceneManager.GetActiveScene().name == "SegundoNivel")
+        if (SceneManager.GetActiveScene().name == "TercerNivel")
+        {
+            SceneManager.LoadScene(cuartoEscena); // Transición al nivel 4
+        }
+        else if (SceneManager.GetActiveScene().name == "SegundoNivel")
         {
             SceneManager.LoadScene(tercerEscena);
         }

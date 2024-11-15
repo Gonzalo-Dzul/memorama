@@ -6,9 +6,10 @@ public class Pausa : MonoBehaviour
 {
     [SerializeField] private GameObject botonPausa;
     [SerializeField] private GameObject menuPausa;
-public void PausaJuego()
+    public void PausaJuego()
     {
-       Time.timeScale = 0f;
+        Debug.Log("Pausando el juego...");
+        Time.timeScale = 0f;
         botonPausa.SetActive(false);
         menuPausa.SetActive(true);
     }
@@ -22,8 +23,10 @@ public void PausaJuego()
 
     public void Reiniciar()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1f; // Asegúrate de que el tiempo esté activo
+        botonPausa.SetActive(true); // Asegúrate de mostrar el botón de pausa
+        menuPausa.SetActive(false); // Asegúrate de ocultar el menú de pausa
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Recarga la escena
     }
 
     public void Cerrar()
