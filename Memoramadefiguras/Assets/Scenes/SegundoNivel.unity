@@ -6017,10 +6017,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allCards: []
-  columnsLevel4: 6
-  rowsLevel4: 4
-  xspaceLevel4: 3.5
-  yspaceLevel4: -4.5
   gameOverPanel: {fileID: 930865214}
   winPanel: {fileID: 1195138866}
   startObject: {fileID: 512795039}
@@ -6044,7 +6040,6 @@ MonoBehaviour:
   finalAttemptsText: {fileID: 153041415}
   finalTimeText: {fileID: 311206311}
   timerText: {fileID: 1086389648}
-  cuartoEscena: CuartoNivel
   scoreText: {fileID: 2137995611}
   attemptsText: {fileID: 1819369792}
   matchSound: {fileID: 2129584803}

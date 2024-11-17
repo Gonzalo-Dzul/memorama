@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
     public const int rowsLevel3 = 6;    // Filas del nivel 3
     public const int columnsLevel4 = 6;
     public const int rowsLevel4 = 4;
+    public const int columnsLevel5 = 4;
+    public const int rowsLevel5 = 4;
     public const float xspace = 4f;
     public const float yspace = -5f;
 
@@ -24,6 +26,7 @@ public class GameController : MonoBehaviour
     private const int baseAttemptsLevel2 = 10;
     private const int baseAttemptsLevel3 = 12;
     private const int baseAttemptsLevel4 = 24; // Intentos para el nivel 4
+    private const int baseAttemptsLevel5 = 25;
 
     private int totalAttempts = 0;
 
@@ -36,6 +39,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private Sprite[] level2Images;
     [SerializeField] private Sprite[] level3Images; // Imágenes para el tercer nivel
     [SerializeField] private Sprite[] level4Images; // Imágenes para el nivel 4
+    [SerializeField] private Sprite[] level5Images;
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private TextMeshProUGUI finalAttemptsText;
     [SerializeField] private TextMeshProUGUI finalTimeText;
@@ -46,7 +50,8 @@ public class GameController : MonoBehaviour
     private string sceneToLoad = "Menu";
     private string siguienteEscena = "SegundoNivel";
     private string tercerEscena = "TercerNivel"; // Nombre de la escena del tercer nivel
-    private string cuartoEscena = "CuartoNivel"; // Nombre de la escena del nivel 4
+    private string cuartaEscena = "CuartoNivel"; // Nombre de la escena del nivel 4
+    private string quintaEscena = "QuintoNivel";
 
     private int score = 0;
     private int remainingAttempts;
@@ -77,6 +82,8 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("Nivel actual: " + SceneManager.GetActiveScene().name);
+
         if (startObject == null)
         {
             Debug.LogError("startObject no está asignado. Por favor, asigna un objeto en el Inspector.");
@@ -111,6 +118,10 @@ public class GameController : MonoBehaviour
         else if (currentScene == "CuartoNivel")
         {
             displayTime = 6f; // Tiempo para el nivel 4
+        }
+        else if (currentScene == "QuintoNivel")
+        {
+            displayTime = 7f;
         }
         else
         {
@@ -152,6 +163,8 @@ public class GameController : MonoBehaviour
         float currentYSpace = yspace;
         float xSpaceLvl4 = xspace;
         float ySpaceLvl4 = yspace;
+        float xSpaceLvl5 = xspace;
+        float ySpaceLvl5 = yspace;
 
         if (SceneManager.GetActiveScene().name == "SegundoNivel")
         {
@@ -177,6 +190,15 @@ public class GameController : MonoBehaviour
             currentImages = level4Images;
             xSpaceLvl4 = 2.7f;
             ySpaceLvl4 = -2.1f;
+        }
+        else if (SceneManager.GetActiveScene().name == "QuintoNivel")
+        {
+            columns = columnsLevel5;
+            rows = rowsLevel5;
+            remainingAttempts = baseAttemptsLevel5;
+            currentImages = level5Images;
+            xSpaceLvl5 = 2.7f;
+            ySpaceLvl5 = -2.1f;
         }
         else
         {
@@ -238,8 +260,12 @@ public class GameController : MonoBehaviour
 
                 // Calcular posición para el nivel actual
                 float positionX, positionY;
-
-                if (SceneManager.GetActiveScene().name == "CuartoNivel")
+                if (SceneManager.GetActiveScene().name == "QuintoNivel")
+                {
+                    positionX = (xSpaceLvl5 * i) + startPosition.x;
+                    positionY = (ySpaceLvl5 * j) + startPosition.y;
+                }
+                else if (SceneManager.GetActiveScene().name == "CuartoNivel")
                 {
                     positionX = (xSpaceLvl4 * i) + startPosition.x;
                     positionY = (ySpaceLvl4 * j) + startPosition.y;
@@ -416,9 +442,13 @@ public class GameController : MonoBehaviour
         gameOverPanel.SetActive(false);
 
         // Carga la escena correspondiente
-        if (SceneManager.GetActiveScene().name == "TercerNivel")
+        if (SceneManager.GetActiveScene().name == "CuartoNivel")
         {
-            SceneManager.LoadScene(cuartoEscena); // Transición al nivel 4
+            SceneManager.LoadScene(quintaEscena);
+        }
+        else if (SceneManager.GetActiveScene().name == "TercerNivel")
+        {
+            SceneManager.LoadScene(cuartaEscena);
         }
         else if (SceneManager.GetActiveScene().name == "SegundoNivel")
         {
