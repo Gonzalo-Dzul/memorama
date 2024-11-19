@@ -793,7 +793,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1637579355}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: LoadScene
         m_Mode: 1
@@ -1694,7 +1694,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1637579355}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: Restart
         m_Mode: 1
@@ -3317,7 +3317,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1637579355}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: Restart
         m_Mode: 1
@@ -3765,8 +3765,8 @@ Transform:
   m_GameObject: {fileID: 1375797233}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.01, y: -0.06, z: -5}
-  m_LocalScale: {x: 1, y: 0.9906, z: 1}
+  m_LocalPosition: {x: -0.0009, y: 0.0082, z: -5}
+  m_LocalScale: {x: 1.0496846, y: 0.9774469, z: 1.0288}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1945141760}
@@ -3854,7 +3854,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1637579355}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: Siguiente
         m_Mode: 1
@@ -4119,7 +4119,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1637579355}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: SalirDeLaApp
         m_Mode: 1
@@ -4896,14 +4896,26 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 6345e17030579c94e9d5cd8ce41af6c1, type: 3}
   - {fileID: 21300000, guid: 61e2b52254892a7499707a51e8284a66, type: 3}
   level5Images:
-  - {fileID: 21300000, guid: 3040f318f92dae848a46f78326763a46, type: 3}
-  - {fileID: 21300000, guid: 17080d921aaa64e4d94714c025dbc4a6, type: 3}
-  - {fileID: 21300000, guid: 4788d454358812d46a46dbc4668c42f5, type: 3}
-  - {fileID: 21300000, guid: 4788d454358812d46a46dbc4668c42f5, type: 3}
-  - {fileID: 21300000, guid: 4788d454358812d46a46dbc4668c42f5, type: 3}
-  - {fileID: 21300000, guid: 4788d454358812d46a46dbc4668c42f5, type: 3}
-  - {fileID: 21300000, guid: 4788d454358812d46a46dbc4668c42f5, type: 3}
-  - {fileID: 21300000, guid: 4788d454358812d46a46dbc4668c42f5, type: 3}
+  - {fileID: 21300000, guid: eca8e0612d98b724480119c95ca821bf, type: 3}
+  - {fileID: 21300000, guid: 4c8d3a27713ae8d41a955520e7844879, type: 3}
+  - {fileID: 21300000, guid: 2d21405d59695a84db0944190c1fef11, type: 3}
+  - {fileID: 21300000, guid: aa244a3c91179bf41815519198d45de7, type: 3}
+  - {fileID: 21300000, guid: 32566c6de6719e742927905d39c52403, type: 3}
+  - {fileID: 21300000, guid: 9e9c38a377738f941a2655387e6f2717, type: 3}
+  - {fileID: 21300000, guid: ec4b421394623344d95018146317f247, type: 3}
+  - {fileID: 21300000, guid: 2df8ec392ba35dc46ad517e0344917ae, type: 3}
+  - {fileID: 21300000, guid: 46cc0a0662352594dae13497f61f6522, type: 3}
+  - {fileID: 21300000, guid: 935c004631b0554479af5512999da363, type: 3}
+  - {fileID: 21300000, guid: 2b7f06608129e344ea79b48a5ed16ef1, type: 3}
+  - {fileID: 21300000, guid: 3004a99df4b8f8245bb96ce44728c902, type: 3}
+  - {fileID: 21300000, guid: 75f1b8c26f4f3bc40b36c97ee0522cf0, type: 3}
+  - {fileID: 21300000, guid: 405a7effc6a8b1e479ac1f64d4bbebc2, type: 3}
+  - {fileID: 21300000, guid: 5f2cc088da71a4243b61d2a424cfa82a, type: 3}
+  - {fileID: 21300000, guid: 15c9d30228827bc43aedc0a7c9974775, type: 3}
+  - {fileID: 21300000, guid: 9e50682556979cd4f91262564d554857, type: 3}
+  - {fileID: 21300000, guid: e6ad7c87696d87e41ae7c1223069bcc0, type: 3}
+  - {fileID: 21300000, guid: c19e1c2ed8fad5249971800719d4aacc, type: 3}
+  - {fileID: 21300000, guid: 1aee709a32eaaca40ba2b8c9e9896e9c, type: 3}
   finalScoreText: {fileID: 1780238431}
   finalAttemptsText: {fileID: 872470521}
   finalTimeText: {fileID: 8713877}
@@ -5598,7 +5610,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1637579355}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
         m_MethodName: LoadScene
         m_Mode: 1
@@ -5885,7 +5897,7 @@ Transform:
   m_GameObject: {fileID: 1945141755}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.79, y: -7.52, z: 0}
+  m_LocalPosition: {x: -5.51, y: -7.52, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -14,9 +14,9 @@ public class GameController : MonoBehaviour
     public const int rowsLevel2 = 2;
     public const int columnsLevel3 = 2; // Columnas del nivel 3
     public const int rowsLevel3 = 6;    // Filas del nivel 3
-    public const int columnsLevel4 = 6;
+    public const int columnsLevel4 = 4;
     public const int rowsLevel4 = 4;
-    public const int columnsLevel5 = 4;
+    public const int columnsLevel5 = 5;
     public const int rowsLevel5 = 4;
     public const float xspace = 4f;
     public const float yspace = -5f;
@@ -25,8 +25,8 @@ public class GameController : MonoBehaviour
     private const int baseAttemptsLevel1 = 8;
     private const int baseAttemptsLevel2 = 10;
     private const int baseAttemptsLevel3 = 12;
-    private const int baseAttemptsLevel4 = 24; // Intentos para el nivel 4
-    private const int baseAttemptsLevel5 = 25;
+    private const int baseAttemptsLevel4 = 16; // Intentos para el nivel 4
+    private const int baseAttemptsLevel5 = 20;
 
     private int totalAttempts = 0;
 
@@ -189,7 +189,7 @@ public class GameController : MonoBehaviour
             remainingAttempts = baseAttemptsLevel4;
             currentImages = level4Images;
             xSpaceLvl4 = 2.7f;
-            ySpaceLvl4 = -2.1f;
+            ySpaceLvl4 = -2.3f;
         }
         else if (SceneManager.GetActiveScene().name == "QuintoNivel")
         {
@@ -198,7 +198,7 @@ public class GameController : MonoBehaviour
             remainingAttempts = baseAttemptsLevel5;
             currentImages = level5Images;
             xSpaceLvl5 = 2.7f;
-            ySpaceLvl5 = -2.1f;
+            ySpaceLvl5 = -2.2f;
         }
         else
         {
