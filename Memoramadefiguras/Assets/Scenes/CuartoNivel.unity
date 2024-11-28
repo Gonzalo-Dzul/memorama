@@ -577,8 +577,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 472e6be9cede41c4bbc35be8791ae08e, type: 3}
   - {fileID: 21300000, guid: d537ee8a5b4a4ea4bb9543ff5f9f22d1, type: 3}
   - {fileID: 21300000, guid: 08fc683d3e20d744e872dd35fa8a316b, type: 3}
-  - {fileID: 21300000, guid: 42f60a1cbcfa96c4aa027fcef1592952, type: 3}
-  - {fileID: 21300000, guid: 6345e17030579c94e9d5cd8ce41af6c1, type: 3}
   - {fileID: 21300000, guid: 61e2b52254892a7499707a51e8284a66, type: 3}
   level5Images:
   - {fileID: 21300000, guid: 3040f318f92dae848a46f78326763a46, type: 3}
